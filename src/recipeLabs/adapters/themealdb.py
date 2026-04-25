@@ -15,4 +15,6 @@ def parse_meal(meal: dict) -> dict:
         "external_id": meal["idMeal"],
         "ingredients": ingredients,
         "instructions": meal["strInstructions"],
+        "source_url": meal["strSource"],
+        "youtube_url": meal["strYoutube"],
     }
