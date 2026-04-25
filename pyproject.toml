@@ -9,6 +9,7 @@ dependencies = [
     "fastapi>=0.128.8",
     "psycopg2-binary>=2.9.12",
     "pydantic-settings>=2.11.0",
+    "python-dotenv>=1.2.1",
     "sqlalchemy>=2.0.49",
     "uvicorn>=0.39.0",
 ]
@@ -27,3 +28,6 @@ extraPaths = ["src"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.mypy]
+exclude = "alembic/"
