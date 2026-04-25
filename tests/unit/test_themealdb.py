@@ -8,6 +8,7 @@ def test_parse_meal():
 
     test_meal = data["meals"][0]
     result = parse_meal(test_meal)
+
     assert result["name"] == "Spaghetti alla Carbonara"
     assert result["cuisine"] == "Italian"
     assert len(result["ingredients"]) == 6  # carbonara has 6 non-empty ingredients

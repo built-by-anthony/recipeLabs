@@ -17,6 +17,7 @@ class Recipe(Base):
     cook_time: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     total_time: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     instructions: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    youtube_url: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
 
 class RecipeIngredient(Base):
