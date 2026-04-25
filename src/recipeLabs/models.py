@@ -1,5 +1,5 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import String, Integer, ForeignKey, Date
+from sqlalchemy import String, Integer, ForeignKey, Date, Text
 from typing import Optional
 
 
@@ -16,6 +16,7 @@ class Recipe(Base):
     prep_time: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     cook_time: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     total_time: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    instructions: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
 
 class RecipeIngredient(Base):
@@ -26,7 +27,7 @@ class RecipeIngredient(Base):
         Integer, ForeignKey("recipes.id"), nullable=False
     )
     name: Mapped[str] = mapped_column(String, nullable=False)
-    quantity: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    quantity: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     unit: Mapped[str] = mapped_column(String, nullable=False)
 
 
