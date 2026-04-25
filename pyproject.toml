@@ -20,6 +20,7 @@ dev = [
     "httpx>=0.28.1",
     "pytest>=8.4.2",
     "pytest-cov>=7.1.0",
+    "testcontainers>=4.13.0",
 ]
 
 [tool.pyright]
