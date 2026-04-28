@@ -5,6 +5,7 @@ from recipeLabs.adapters.themealdb import parse_meal
 from recipeLabs.database import get_db
 from recipeLabs.models import Recipe, RecipeSource
 from sqlalchemy.orm import Session
+from typing import Optional
 
 
 class ImportRequest(BaseModel):
@@ -48,3 +49,39 @@ def recipe_import(request: ImportRequest, db: Session = Depends(get_db)) -> dict
     db.commit()
 
     return {"id": recipe.id, "name": recipe.name}
+
+
+@router.get("/recipes")
+def list_recipes(db: Session = Depends(get_db)) -> list:
+    recipes = db.query(Recipe).all()
+    return [{"id": r.id, "name": r.name, "cuisine": r.cuisine} for r in recipes]
+
+
+class RecipeCreate(BaseModel):
+    name: str
+    cuisine: Optional[str] = None
+    prep_time: Optional[int] = None
+    cook_time: Optional[int] = None
+    total_time: Optional[int] = None
+
+
+@router.post("/recipes")
+def create_recipe(request: RecipeCreate, db: Session = Depends(get_db)) -> dict:
+    recipe = Recipe(
+        name=request.name,
+        cuisine=request.cuisine,
+        prep_time=request.prep_time,
+        cook_time=request.cook_time,
+        total_time=request.total_time,
+    )
+    db.add(recipe)
+    db.commit()
+    db.refresh(recipe)
+
+    return {
+        "id": recipe.id,
+        "name": recipe.name,
+        "prep_time": recipe.prep_time,
+        "cook_time": recipe.cook_time,
+        "total_time": recipe.total_time,
+    }
