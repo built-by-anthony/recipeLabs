@@ -141,3 +141,58 @@ def delete_recipe(recipe_id, db: Session = Depends(get_db)):
     db.delete(recipe)
     db.commit()
     return {"message": "deleted"}
+
+
+class RecipePatch(BaseModel):
+    name: Optional[str] = None
+    cuisine: Optional[str] = None
+    prep_time: Optional[int] = None
+    cook_time: Optional[int] = None
+    total_time: Optional[int] = None
+    instructions: Optional[str] = None
+    youtube_url: Optional[str] = None
+
+
+@router.patch("/recipes/{recipe_id}")
+def edit_recipe(
+    recipe_id: int, request: RecipePatch, db: Session = Depends(get_db)
+) -> dict:
+    recipe = db.query(Recipe).filter_by(id=recipe_id).first()
+
+    if recipe is None:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+
+    if request.name is not None:
+        recipe.name = request.name
+
+    if request.cuisine is not None:
+        recipe.cuisine = request.cuisine
+
+    if request.prep_time is not None:
+        recipe.prep_time = request.prep_time
+
+    if request.cook_time is not None:
+        recipe.cook_time = request.cook_time
+
+    if request.total_time is not None:
+        recipe.total_time = request.total_time
+
+    if request.instructions is not None:
+        recipe.instructions = request.instructions
+
+    if request.youtube_url is not None:
+        recipe.youtube_url = request.youtube_url
+
+    db.commit()
+    db.refresh(recipe)
+
+    return {
+        "id": recipe.id,
+        "name": recipe.name,
+        "cuisine": recipe.cuisine,
+        "prep_time": recipe.prep_time,
+        "cook_time": recipe.cook_time,
+        "total_time": recipe.total_time,
+        "instructions": recipe.instructions,
+        "youtube_url": recipe.youtube_url,
+    }
