@@ -1,11 +1,14 @@
-from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from datetime import date
+from typing import Optional
+
 import requests
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
 from recipeLabs.adapters.themealdb import parse_meal
 from recipeLabs.database import get_db
-from recipeLabs.models import Recipe, RecipeSource
-from sqlalchemy.orm import Session
-from typing import Optional
+from recipeLabs.models import CookLog, Recipe, RecipeSource
 
 
 class ImportRequest(BaseModel):
@@ -52,9 +55,30 @@ def recipe_import(request: ImportRequest, db: Session = Depends(get_db)) -> dict
 
 
 @router.get("/recipes")
-def list_recipes(db: Session = Depends(get_db)) -> list:
-    recipes = db.query(Recipe).all()
-    return [{"id": r.id, "name": r.name, "cuisine": r.cuisine} for r in recipes]
+def list_recipes(
+    min_rating: Optional[int] = None,
+    last_cooked_date: Optional[date] = None,
+    source: Optional[str] = None,
+    db: Session = Depends(get_db),
+) -> list:
+    if min_rating is None and last_cooked_date is None and source is None:
+        recipes = db.query(Recipe).all()
+        return [{"id": r.id, "name": r.name, "cuisine": r.cuisine} for r in recipes]
+
+    query = db.query(Recipe).join(CookLog, CookLog.recipe_id == Recipe.id)
+
+    if min_rating is not None:
+        query = query.filter(CookLog.rating >= min_rating)
+
+    if last_cooked_date is not None:
+        query = query.filter(CookLog.cooked_at >= last_cooked_date)
+
+    if source is not None:
+        query = query.join(RecipeSource, RecipeSource.recipe_id == Recipe.id).filter(
+            RecipeSource.source_url == source
+        )
+
+    return [{"id": r.id, "name": r.name, "cuisine": r.cuisine} for r in query]
 
 
 class RecipeCreate(BaseModel):
@@ -85,3 +109,15 @@ def create_recipe(request: RecipeCreate, db: Session = Depends(get_db)) -> dict:
         "cook_time": recipe.cook_time,
         "total_time": recipe.total_time,
     }
+
+
+@router.delete("/recipes/{recipe_id}")
+def delete_recipe(recipe_id, db: Session = Depends(get_db)):
+    recipe = db.query(Recipe).filter_by(id=recipe_id).first()
+
+    if recipe is None:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+
+    db.delete(recipe)
+    db.commit()
+    return {"message": "deleted"}
