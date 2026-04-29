@@ -1,7 +1,8 @@
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import String, Integer, ForeignKey, Text, Date
-from typing import Optional
 from datetime import date
+from typing import Optional
+
+from sqlalchemy import Date, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
@@ -50,7 +51,7 @@ class CookLog(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     recipe_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("recipes.id"), nullable=False
+        Integer, ForeignKey("recipes.id", ondelete="CASCADE"), nullable=False
     )
     cooked_at: Mapped[date] = mapped_column(Date, nullable=False)
     rating: Mapped[int] = mapped_column(Integer, nullable=False)
