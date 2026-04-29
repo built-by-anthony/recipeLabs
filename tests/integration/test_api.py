@@ -69,6 +69,7 @@ def test_list_recipes_filter_by_rating(db_session):
 
     assert len(response.json()) == 1
     assert response.json()[0]["name"] == "Test Pasta"
+    app.dependency_overrides.clear()
 
 
 def test_list_recipes_filter_by_last_cooked_date(db_session):
@@ -98,6 +99,23 @@ def test_list_recipes_filter_by_last_cooked_date(db_session):
 
     assert len(response.json()) == 1
     assert response.json()[0]["name"] == "Test Pasta"
+    app.dependency_overrides.clear()
+
+
+def test_get_single_recipe(db_session):
+    app.dependency_overrides[get_db] = lambda: db_session
+
+    recipe_1 = Recipe(name="Test Pasta")
+    db_session.add(recipe_1)
+    db_session.commit()
+
+    recipe_2 = Recipe(name="Test Potato")
+    db_session.add(recipe_2)
+    db_session.commit()
+
+    response = client.get(f"/recipes/{recipe_1.id}")
+    assert response.json()["name"] == "Test Pasta"
+    app.dependency_overrides.clear()
 
 
 def test_manual_recipe_import(db_session):

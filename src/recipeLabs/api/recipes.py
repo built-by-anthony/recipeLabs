@@ -1,3 +1,4 @@
+import json
 from datetime import date
 from typing import Optional
 
@@ -79,6 +80,25 @@ def list_recipes(
         )
 
     return [{"id": r.id, "name": r.name, "cuisine": r.cuisine} for r in query]
+
+
+@router.get("/recipes/{recipe_id}")
+def get_single_recipe(recipe_id: int, db: Session = Depends(get_db)) -> dict:
+    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
+
+    if recipe is None:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+
+    return {
+        "id": recipe.id,
+        "name": recipe.name,
+        "cuisine": recipe.cuisine,
+        "prep_time": recipe.prep_time,
+        "cook_time": recipe.cook_time,
+        "total_time": recipe.total_time,
+        "instructions": recipe.instructions,
+        "youtube_url": recipe.youtube_url,
+    }
 
 
 class RecipeCreate(BaseModel):
