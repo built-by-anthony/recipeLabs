@@ -169,6 +169,34 @@ def test_delete_recipe(db_session):
     app.dependency_overrides.clear()
 
 
+def test_edit_recipe(db_session):
+    app.dependency_overrides[get_db] = lambda: db_session
+
+    # create a recipe first
+    recipe = Recipe(name="Test Recipe")
+    db_session.add(recipe)
+    db_session.commit()
+
+    response = client.patch(
+        f"/recipes/{recipe.id}",
+        json={
+            "id": recipe.id,
+            "name": "Test Burger",
+            "cuisine": "American",
+            "prep_time": 5,
+            "cook_time": 15,
+            "total_time": 20,
+            "instructions": recipe.instructions,
+            "youtube_url": recipe.youtube_url,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["name"] == "Test Burger"
+    assert response.json()["cuisine"] == "American"
+    app.dependency_overrides.clear()
+
+
 def test_cook_log(db_session):
     app.dependency_overrides[get_db] = lambda: db_session
 
