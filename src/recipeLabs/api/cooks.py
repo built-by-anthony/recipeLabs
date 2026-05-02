@@ -1,10 +1,12 @@
+from datetime import date
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
 from recipeLabs.database import get_db
 from recipeLabs.models import CookLog
-from sqlalchemy.orm import Session
-from typing import Optional
-from datetime import date
 
 router = APIRouter()
 

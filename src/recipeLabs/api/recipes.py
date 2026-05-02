@@ -1,4 +1,3 @@
-import json
 from datetime import date
 from typing import Optional
 
@@ -186,7 +185,7 @@ def edit_recipe(
     db.commit()
     db.refresh(recipe)
 
-    return {
+    return {  # pyright: ignore[reportUnknownVariableType]
         "id": recipe.id,
         "name": recipe.name,
         "cuisine": recipe.cuisine,

@@ -1,5 +1,6 @@
-from recipeLabs.adapters.themealdb import parse_meal
 import json
+
+from recipeLabs.adapters.themealdb import parse_meal
 
 
 def test_parse_meal():

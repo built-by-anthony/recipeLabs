@@ -1,8 +1,8 @@
 import pytest
+from recipeLabs.models import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from testcontainers.postgres import PostgresContainer
-from recipeLabs.models import Base
 
 
 @pytest.fixture

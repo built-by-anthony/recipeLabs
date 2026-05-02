@@ -1,8 +1,8 @@
 from fastapi import FastAPI
+
+from recipeLabs.api.cooks import router as cooks_router
 from recipeLabs.api.health import router
 from recipeLabs.api.recipes import router as recipes_router
-from recipeLabs.api.cooks import router as cooks_router
-
 
 app = FastAPI()
 app.include_router(router)

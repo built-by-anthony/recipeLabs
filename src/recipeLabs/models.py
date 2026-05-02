@@ -31,7 +31,6 @@ class RecipeIngredient(Base):
     )
     name: Mapped[str] = mapped_column(String, nullable=False)
     quantity: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-    unit: Mapped[str] = mapped_column(String, nullable=False)
 
 
 class RecipeSource(Base):
